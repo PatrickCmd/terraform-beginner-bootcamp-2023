@@ -33,7 +33,7 @@ provider "random" {
 resource "random_string" "bucket_name" {
   lower   = true
   upper   = false
-  length  = 16
+  length  = 32
   special = false
 }
 
