@@ -1,5 +1,13 @@
 
 terraform {
+  cloud {
+    organization = "PatrickCmdCloud"
+
+    workspaces {
+      name = "terra-house-cmd"
+    }
+  }
+
   required_providers {
     random = {
       source  = "hashicorp/random"

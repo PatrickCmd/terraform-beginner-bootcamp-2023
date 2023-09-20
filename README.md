@@ -301,3 +301,34 @@ https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 3. `version`: This attribute specifies the version of the provider that you want to use. In this snippet, it's set to "5.17.0," which means you want to use version 5.17.0 of the AWS provider.
 
 When you define this provider configuration in your Terraform configuration file, it tells Terraform to use the specified AWS provider with the specified version when creating and managing AWS resources in your infrastructure. Terraform will automatically download and use the specified provider version from the HashiCorp registry to interact with AWS.
+
+## Issues with Terraform Cloud Login and Gitpod Workspace
+
+When attempting to run `terraform login` it will launch bash a **wiswig** view to generate a token. However it does not work expected in Gitpod VsCode in the browser.
+
+The workaround is manually generate a token in Terraform Cloud
+
+```
+https://app.terraform.io/app/settings/tokens?source=terraform-login
+```
+
+Then create open the file manually here:
+
+```sh
+touch /home/gitpod/.terraform.d/credentials.tfrc.json
+open /home/gitpod/.terraform.d/credentials.tfrc.json
+```
+
+Provide the following code (replace your token in the file):
+
+```json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "YOUR-TERRAFORM-CLOUD-TOKEN"
+    }
+  }
+}
+```
+
+Another observation is that when copying and pasting using short keys `ctrl + c` and  `ctrl + v` doesn't work well in the gitpod terminal environment. To successfully copy or paste, use the context menu options to copy and paste while in the gitpod terminal environment.
