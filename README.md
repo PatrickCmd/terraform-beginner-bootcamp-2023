@@ -334,3 +334,47 @@ Provide the following code (replace your token in the file):
 Another observation is that when copying and pasting using short keys `ctrl + c` and  `ctrl + v` doesn't work well in the gitpod terminal environment. To successfully copy or paste, use the context menu options to copy and paste while in the gitpod terminal environment.
 
 Automated this workaround with the following bash script [bin/generate_tfrc_credentials](bin/generate_tfrc_credentials)
+
+## Set alias tf for terraform in gitpod
+
+You can use a simple Bash script to add the alias `tf="terraform"` to your Bash profile. Here's a script to do that:
+
+```bash
+#!/bin/bash
+
+# Define the alias
+alias_to_add="alias tf='terraform'"
+
+# Check if the alias already exists in the Bash profile
+if ! grep -q "$alias_to_add" ~/.bash_profile; then
+    # If it doesn't exist, append it to the Bash profile
+    echo "$alias_to_add" >> ~/.bash_profile
+    echo "Alias 'tf' added to ~/.bash_profile. Please run 'source ~/.bash_profile' to apply it."
+else
+    echo "Alias 'tf' already exists in ~/.bash_profile. No changes made."
+fi
+```
+
+Here's what the script does:
+
+1. It defines the alias you want to add as a variable called `alias_to_add`.
+
+2. It checks if the alias already exists in your `~/.bash_profile` file using `grep`. If it doesn't find the alias, it proceeds to add it.
+
+3. If the alias doesn't exist, it appends the alias to your `~/.bash_profile` file and provides a message indicating that the alias has been added.
+
+4. If the alias already exists, it provides a message indicating that no changes have been made.
+
+After creating the script, make it executable by running:
+
+```bash
+chmod +x set_tf_alias.sh
+```
+
+Then, you can execute the script to add the alias by running:
+
+```bash
+./set_tf_alias.sh
+```
+
+After running the script, you should run `source ~/.bash_profile` or restart your terminal to apply the changes to your current session.
