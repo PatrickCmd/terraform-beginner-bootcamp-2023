@@ -214,6 +214,13 @@ This will run a plan and pass the changeset to be execute by terraform. Apply sh
 
 If we want to automatically approve an apply we can provide the auto approve flag eg. `terraform apply --auto-approve`
 
+#### Terraform Destroy
+
+`teraform destroy`
+This will destroy resources.
+
+You can alos use the auto approve flag to skip the approve prompt eg. `terraform destroy --auto-approve`
+
 ### Terraform Lock Files
 
 `.terraform.lock.hcl` contains the locked versioning for the providers or modulues that should be used with this project.
@@ -235,3 +242,62 @@ If you lose this file, you lose knowning the state of your infrastructure.
 ### Terraform Directory
 
 `.terraform` directory contains binaries of terraform providers.
+
+### Create an AWS S3 bucket
+We created an AWS S3 bucket using terraform and using the `random_string` resource from the `random` terraform provider. When creating a bucket the [AWS Documentation](tps://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html?icmpid=docs_amazons3_console) shows that we can't create bucket names consisting of random characters.
+
+So we had to configure our `random_string` resource to consist of only lower case letters.
+
+```hcl
+# https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string
+resource "random_string" "bucket_name" {
+  lower   = true
+  upper   = false
+  length  = 16
+  special = false
+}
+```
+
+To use the aws resources when need to import the [aws provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+
+> **Note:** You can't have two terraform required providers configured separately. Meaning that if you intend to have more than two providers they should be in the same `required_providers` section within the terraform block.
+
+```hcl
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "3.5.1"
+    }
+
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.17.0"
+    }
+  }
+}
+```
+
+#### Random Provider
+
+https://registry.terraform.io/providers/hashicorp/random/latest/docs
+
+1. `random`: This is the name given to the random provider configuration block. In Terraform, just like with AWS or other cloud providers, you can specify providers for various purposes. In this case, it's configuring the random provider. You can choose any name you prefer for your provider configuration blocks.
+
+2. `source`: This attribute specifies where Terraform should find the provider plugin code. In this snippet, it's set to "hashicorp/random," which indicates that the random provider is coming from the HashiCorp registry. The source follows the format of "namespace/provider-name," and in this case, it's the random provider from HashiCorp.
+
+3. `version`: This attribute specifies the version of the provider that you want to use. In this snippet, it's set to "3.5.1," which means you want to use version 3.5.1 of the random provider.
+
+The random provider in Terraform is used for generating random values or performing random operations within your Terraform configurations. It's commonly used for tasks like generating random passwords, generating random numbers, or introducing controlled randomness into your infrastructure code.
+
+#### AWS Provider
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+
+1. `aws`: This is the name given to the AWS provider configuration block. In Terraform, you need to specify a provider for the cloud or service you want to interact with. In this case, it's AWS. You could give it any name you like, but `aws` is a commonly used name for AWS provider configurations.
+
+2. `source`: This attribute specifies where Terraform should find the provider plugin code. In this snippet, it's set to "hashicorp/aws," which indicates that the AWS provider is coming from the HashiCorp registry. The HashiCorp registry is a repository of provider plugins maintained by HashiCorp, the company behind Terraform. The source typically follows the format of "namespace/provider-name," and in this case, it's the AWS provider from HashiCorp.
+
+3. `version`: This attribute specifies the version of the provider that you want to use. In this snippet, it's set to "5.17.0," which means you want to use version 5.17.0 of the AWS provider.
+
+When you define this provider configuration in your Terraform configuration file, it tells Terraform to use the specified AWS provider with the specified version when creating and managing AWS resources in your infrastructure. Terraform will automatically download and use the specified provider version from the HashiCorp registry to interact with AWS.
