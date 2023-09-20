@@ -332,3 +332,5 @@ Provide the following code (replace your token in the file):
 ```
 
 Another observation is that when copying and pasting using short keys `ctrl + c` and  `ctrl + v` doesn't work well in the gitpod terminal environment. To successfully copy or paste, use the context menu options to copy and paste while in the gitpod terminal environment.
+
+Automated this workaround with the following bash script [bin/generate_tfrc_credentials](bin/generate_tfrc_credentials)
