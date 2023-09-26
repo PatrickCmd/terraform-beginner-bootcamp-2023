@@ -168,3 +168,24 @@ Terraform loads variables in the following order, with later sources taking prec
 Nice visual from [Tanushree - Linkedin Post](https://www.linkedin.com/posts/tanushree-aggarwal_terraformcloudprojectbootcamp-terraform-aws-activity-7111755120912023553-lepQ/?utm_source=share&utm_medium=member_desktop) illustrating the **Terraform input variable precedence**
 
 ![tf variable precedence](assets/tf_variable_precedence.gif)
+
+## Dealing With Configuration Drift
+
+## What happens if we lose our state file?
+
+If you lose your statefile, you most likley have to tear down all your cloud infrastructure manually.
+
+You can use `terraform import` but it won't for all cloud resources. You need check the terraform providers documentation for which resources support import.
+
+### Fix Missing Resources with Terraform Import
+
+`terraform import aws_s3_bucket.bucket bucket-name`
+
+[Terraform Import](https://developer.hashicorp.com/terraform/cli/import)
+[AWS S3 Bucket Import](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket#import)
+
+### Fix Manual Configuration
+
+If someone goes and deletes or modifies cloud resource manually through ClickOps. 
+
+If we run Terraform plan with the attempt to put our infrstraucture back into the expected state fixing Configuration Drift
