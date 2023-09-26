@@ -1,6 +1,8 @@
 # Terraform Beginner Bootcamp 2023 - Week0
 
-- [Semantic Versioning 🧙](#semantic-versioning---)
+![week0-architecture-diagram](https://github.com/PatrickCmd/terraform-beginner-bootcamp-2023/assets/6010217/f57aa6d7-19d8-473e-9d18-3d8fabe22e56)
+
+- [Semantic Versioning 🧙](#semantic-versioning-)
 - [Install the Terraform CLI](#install-the-terraform-cli)
   * [Considerations with the Terraform CLI changes](#considerations-with-the-terraform-cli-changes)
   * [Considerations for Linux Distribution](#considerations-for-linux-distribution)
