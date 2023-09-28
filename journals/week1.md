@@ -230,3 +230,156 @@ module "terrahouse_aws" {
 
 
 [Modules Sources](https://developer.hashicorp.com/terraform/language/modules/sources)
+
+## Considerations when using ChatGPT to write Terraform
+
+LLMs such as ChatGPT may not be trained on the latest documentation or information about Terraform.
+
+It may likely produce older examples that could be deprecated. Often affecting providers.
+
+## Working with Files in Terraform
+
+
+### Fileexists function
+
+This is a built in terraform function to check the existance of a file.
+
+```tf
+condition = fileexists(var.error_html_filepath)
+```
+
+https://developer.hashicorp.com/terraform/language/functions/fileexists
+
+### Filemd5
+
+https://developer.hashicorp.com/terraform/language/functions/filemd5
+
+### Path Variable
+
+In terraform there is a special variable called `path` that allows us to reference local paths:
+- path.module = get the path for the current module
+- path.root = get the path for the root module
+
+[Special Path Variable](https://developer.hashicorp.com/terraform/language/expressions/references#filesystem-and-workspace-info)
+
+
+```
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "index.html"
+  source = "${path.root}/public/index.html"
+}
+```
+
+> **Note**: It's not best practice to use terraform for data or file management.
+
+## Workaround Creating S3 Objects from Terraform Cloud (Testing and Experimentation Purposes)
+
+> **Note**: Not ideal in the real world. Explanation from LLM ChatGPT.
+
+When working with Terraform Cloud, you cannot directly reference local file paths on your computer because Terraform Cloud executes your code remotely in its own environment. Instead, you need to upload the necessary files to Terraform Cloud or use remote storage solutions to provide access to your files. Here's how you can handle this situation:
+
+1. **Use Remote Storage (Recommended)**:
+   The best practice is to store your static website files, such as `index.html`, in a remote storage solution, like an S3 bucket, Google Cloud Storage, or Azure Blob Storage. Then, your Terraform code can reference the remote storage location instead of local file paths.
+
+   For example, if you are using an S3 bucket for your website files, you can use the `aws_s3_object` resource in Terraform to upload the file to the bucket. Here's an example:
+
+   ```hcl
+   resource "aws_s3_object" "index_html" {
+     bucket = "your-bucket-name"
+     key    = "public/index.html"
+     source = "/workspace/terraform-beginner-bootcamp-2023/public/index.html"
+   }
+   ```
+
+   Replace `"your-bucket-name"` with the name of your S3 bucket.
+
+2. **Terraform Variables for Remote Storage**:
+   If your static files are in a remote location (e.g., an S3 bucket), you can use Terraform variables to specify the remote file URLs. This way, you don't need to upload the files through Terraform, and your code remains flexible. Your variable might look like this:
+
+   ```hcl
+   variable "index_html_url" {
+     description = "URL to the index.html file"
+     type        = string
+     default     = "https://your-bucket-name.s3.amazonaws.com/public/index.html"
+   }
+   ```
+
+   In this case, you manually set the `default` value to the URL of your remote `index.html` file.
+
+3. **Uploading Files to Terraform Cloud (Not Recommended)**:
+   If you must upload files to Terraform Cloud, you can use the "Workspace Variables" feature. However, this approach is not recommended for large files or sensitive information.
+
+   - Go to your workspace in Terraform Cloud.
+   - Navigate to the "Variables" tab.
+   - Create a new variable, e.g., `index_html_content`.
+   - In the "Value" field, paste the content of your `index.html` file.
+   - In your Terraform code, reference this variable and write the content to a file within the working directory.
+
+   This approach is not scalable for large files, and it's better to use remote storage for files like `index.html` in a real-world scenario.
+
+Remember that Terraform Cloud is primarily designed for managing infrastructure, and it's best to leverage specialized services like remote storage for handling application files.
+
+When you upload the content of your `index.html` file as a variable in Terraform Cloud (e.g., `index_html_content`), you can reference this variable in your Terraform code and use it to create an S3 object. Here's how you can do it:
+
+1. In your Terraform configuration, declare the variable for `index_html_content`:
+
+   ```hcl
+   variable "index_html_content" {
+     description = "Content of the index.html file"
+     type        = string
+   }
+   ```
+
+2. In your Terraform resource block for creating an S3 object, use the `var.index_html_content` variable as the source content:
+
+   ```hcl
+   resource "aws_s3_object" "index_html" {
+     bucket = "your-bucket-name"
+     key    = "public/index.html"
+     content = var.index_html_content
+   }
+   ```
+
+   Replace `"your-bucket-name"` with the name of your S3 bucket.
+
+3. In your Terraform Cloud workspace, go to the "Variables" tab, and create a new variable named `index_html_content`. In the "Value" field, paste the content of your `index.html` file.
+
+4. When you apply your Terraform configuration in Terraform Cloud, it will use the value you provided for the `index_html_content` variable and create an S3 object with that content.
+
+Make sure that the content you paste into the `index_html_content` variable in Terraform Cloud includes the HTML content of your `index.html` file, and it should be properly formatted as a string.
+
+This approach allows you to upload the content of your `index.html` file to Terraform Cloud and then use it to create the S3 object without referencing a local file path.
+
+### My workaround with the above approach using Terraform Cloud
+
+```hcl
+# modules/terrahouse_aws/main.tf
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object
+resource "aws_s3_object" "index_html" {
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "index.html"
+
+  content = var.index_html_content  # For testing purposes with terraform cloud.
+}
+
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object
+resource "aws_s3_object" "error_html" {
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "error.html"
+  
+  content = "Error Found!"  # For testing purposes with terraform cloud.
+}
+```
+
+```hcl
+# modules/terrahouse_aws/variables.tf
+
+variable "index_html_content" {
+  description = "The index html page content"
+  type        = string
+}
+```
+
+Set the terraform variable `index_html_content` in Terraform Cloud for the contents of the `index.html` file.
