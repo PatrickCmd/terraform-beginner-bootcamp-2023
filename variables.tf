@@ -17,3 +17,7 @@ variable "error_html_filepath" {
 # variable "index_html_content" {
 #   type = string
 # }
+
+variable "content_version" {
+  type        = number
+}

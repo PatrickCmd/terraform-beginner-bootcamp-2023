@@ -32,6 +32,10 @@ resource "aws_s3_object" "index_html" {
   etag = filemd5(var.index_html_filepath)
 
   # content = var.index_html_content  # For testing purposes with terraform cloud.
+  lifecycle {
+    replace_triggered_by = [terraform_data.content_version.output]
+    ignore_changes = [etag]
+  }
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object
@@ -44,6 +48,10 @@ resource "aws_s3_object" "error_html" {
   etag = filemd5(var.error_html_filepath)
 
   # content = "Error Found!"  # For testing purposes with terraform cloud.
+
+  #lifecycle {
+  #  ignore_changes = [etag]
+  #}
 }
 
 # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html
@@ -69,4 +77,8 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
       }
     }
   })
+}
+
+resource "terraform_data" "content_version" {
+  input = var.content_version
 }
