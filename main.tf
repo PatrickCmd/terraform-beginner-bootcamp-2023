@@ -1,11 +1,11 @@
 terraform {
-  # cloud {
-  #   organization = "PatrickCmdCloud"
+  cloud {
+    organization = "PatrickCmdCloud"
 
-  #   workspaces {
-  #     name = "terra-house-cmd"
-  #   }
-  # }
+    workspaces {
+      name = "terra-cloud-cmd"
+    }
+  }
 }
 
 provider "aws" {
