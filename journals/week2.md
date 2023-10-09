@@ -167,3 +167,11 @@ To delete a particular terra house, run the delete bash script using it's `uuid`
 ```sh
 ./bin/terratowns/delete a22cf824-fc82-4090-958f-a7835f8bcad9
 ```
+
+## CRUD
+
+Terraform Provider resources utilize CRUD.
+
+CRUD stands for Create, Read Update, and Delete
+
+https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
