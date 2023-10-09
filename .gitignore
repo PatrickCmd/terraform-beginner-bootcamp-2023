@@ -35,3 +35,5 @@ terraform.rc
 
 # Environment variable file
 .env
+
+terraform-provider-terratowns/terraform-provider-terratowns_v*
