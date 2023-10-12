@@ -15,23 +15,16 @@ variable "bucket_name" {
   type = string
 }*/
 
-variable "index_html_filepath" {
-  type = string
+variable "nfs" {
+  type = object({
+    public_path     = string
+    content_version = number
+  })
 }
 
-variable "error_html_filepath" {
-  type = string
-}
-
-# variable "index_html_content" {
-#   type = string
-# }
-
-variable "content_version" {
-  type = number
-}
-
-variable "assets_path" {
-  description = "Path to assets folder"
-  type        = string
+variable "recipes" {
+  type = object({
+    public_path     = string
+    content_version = number
+  })
 }
